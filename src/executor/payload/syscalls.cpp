@@ -13,12 +13,14 @@
 #include <signal.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "syscalls.h"
 
 #define STDIN_FILENO  0
 #define STDOUT_FILENO 1
 #define STDERR_FILENO 2
+#define FAKE_FILENO   3
 
 using namespace bmboot;
 
@@ -37,7 +39,23 @@ extern "C" int _isatty(int fd)
 
 extern "C" int _write(int fd, char *ptr, int len)
 {
+    (void) fd;
     return writeToStdout(ptr, len);
+}
+
+// **********************************************************
+
+int _open(const char *path, int flags, mode_t mode)
+{
+    (void)flags;
+    (void)mode;
+
+    if (path && strcmp(path, "/dev/null") == 0) {
+        return FAKE_FILENO; // pretend it opened
+    }
+
+    errno = ENOSYS;
+    return -1;
 }
 
 // **********************************************************
@@ -67,6 +85,8 @@ extern "C" int _lseek(int fd, int ptr, int dir)
 
 extern "C" int _read(int fd, char* ptr, int len)
 {
+    (void)ptr;
+    (void)len;
     if (fd == STDIN_FILENO)
     {
         return EIO;
@@ -86,6 +106,20 @@ extern "C" int _fstat(int fd, struct stat* st)
     }
 
     errno = EBADF;
+    return 0;
+}
+
+// **********************************************************
+
+extern "C" pid_t _getpid(void)
+{
+    return 1;
+}
+
+// **********************************************************
+
+extern "C" int _kill(pid_t, int)
+{
     return 0;
 }
 
