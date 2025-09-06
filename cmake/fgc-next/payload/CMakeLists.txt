@@ -54,7 +54,7 @@ target_link_options(${BMBOOT_PAYLOAD_LIB} PUBLIC
 # Function to make a target into a bm payload
 #######################################################
 function(make_bmboot_payload target cpu_n)
-    set(BMBOOT_ROOT "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/../..")
+    set(BMBOOT_ROOT "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/../../..")
 
     # Add the suffix with cpu number and elf extension
     set_target_properties("${target}" PROPERTIES SUFFIX "_cpu${cpu_n}.elf")
