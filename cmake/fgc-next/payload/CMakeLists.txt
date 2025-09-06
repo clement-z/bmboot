@@ -2,7 +2,10 @@ cmake_minimum_required(VERSION 3.17)
 
 project(bmboot_payload C CXX ASM)
 
-set(BMBOOT_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/../..")
+set(BMBOOT_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/../../..")
+
+add_compile_options(-Wall -ffunction-sections -fdata-sections)
+add_link_options(-Wl,--gc-sections -specs=nosys.specs)
 
 #######################################################
 # Set up the payload library
